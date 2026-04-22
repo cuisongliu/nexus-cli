@@ -7,7 +7,7 @@
 - Nexus2 导出命令：`nexus2-backup-download`、`nexus2-component-download`
 - Nexus2 导入命令：`nexus2-backup-upload`、`nexus2-component-upload`
 
-更多按场景组织的案例见 [docs/use-cases.md](/mnt/d/gitProjects/nexus3/docs/use-cases.md)。
+更多按场景组织的案例见 [docs/use-cases.md](./docs/use-cases.md)。
 
 旧的 `upload`、`npm-down`、`npm-pack` 已从 CLI 移除，其中 npm 相关命令改名为 `npm-cache`、`npm-pkg`。
 

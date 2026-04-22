@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	nx3 "nexus3/internal/nexus3"
+	nx3 "nexus-cli/internal/nexus3"
 )
 
 type ImportOptions struct {

@@ -1,4 +1,4 @@
-# nexus3 使用案例
+# nexus-cli 使用案例
 
 这份文档不重复参数说明，重点是回答：
 
@@ -36,21 +36,21 @@
 命令：
 
 ```bash
-./nexus3 npm-cache ./package-lock.json ./offline-store
+./nexus-cli npm-cache ./package-lock.json ./offline-store
 ```
 
 也可以：
 
 ```bash
-./nexus3 npm-cache ./yarn.lock ./offline-store
+./nexus-cli npm-cache ./yarn.lock ./offline-store
 
-./nexus3 npm-cache ./node_modules ./offline-store
+./nexus-cli npm-cache ./node_modules ./offline-store
 ```
 
 如果依赖下载地址是 HTTPS 自签名证书：
 
 ```bash
-./nexus3 npm-cache -k ./package-lock.json ./offline-store
+./nexus-cli npm-cache -k ./package-lock.json ./offline-store
 ```
 
 ## 场景二：把本地 node_modules 重新打成 tarball
@@ -67,7 +67,7 @@
 命令：
 
 ```bash
-./nexus3 npm-pkg ./my-project ./pkg-store
+./nexus-cli npm-pkg ./my-project ./pkg-store
 ```
 
 这个命令不走网络，不需要 `-k`。
@@ -85,7 +85,7 @@
 命令：
 
 ```bash
-./nexus3 backup-download \
+./nexus-cli backup-download \
   --format maven \
   --repo-url https://nexus3.example.com/repository/maven-releases \
   -u admin -p 123456 \
@@ -94,13 +94,13 @@
 
 导出结果：
 
-- `maven-backup/nexus3-backup.json`
+- `maven-backup/nexus-cli-backup.json`
 - `maven-backup/assets/...`
 
 如果目标是 HTTP 服务，也可以直接写：
 
 ```bash
-./nexus3 backup-download \
+./nexus-cli backup-download \
   --format maven \
   --repo-url http://nexus3.example.com/repository/maven-releases \
   -u admin -p 123456 \
@@ -112,7 +112,7 @@
 命令：
 
 ```bash
-./nexus3 backup-download \
+./nexus-cli backup-download \
   --format npm \
   --repo-url https://nexus3.example.com/repository/npm-hosted \
   -u admin -p 123456 \
@@ -122,7 +122,7 @@
 如果证书不可信：
 
 ```bash
-./nexus3 backup-download \
+./nexus-cli backup-download \
   --format npm \
   --repo-url https://nexus3.example.com/repository/npm-hosted \
   -u admin -p 123456 \
@@ -137,7 +137,7 @@
 先导出：
 
 ```bash
-./nexus3 backup-download \
+./nexus-cli backup-download \
   --format maven \
   --repo-url https://source-nexus3/repository/maven-releases \
   -u sourceUser -p sourcePass \
@@ -147,7 +147,7 @@
 再导入：
 
 ```bash
-./nexus3 backup-upload \
+./nexus-cli backup-upload \
   --format maven \
   --repo-url https://target-nexus3/repository/maven-releases \
   -u targetUser -p targetPass \
@@ -159,7 +159,7 @@
 先导出：
 
 ```bash
-./nexus3 backup-download \
+./nexus-cli backup-download \
   --format npm \
   --repo-url https://source-nexus3/repository/npm-hosted \
   -u sourceUser -p sourcePass \
@@ -169,7 +169,7 @@
 再导入：
 
 ```bash
-./nexus3 backup-upload \
+./nexus-cli backup-upload \
   --format npm \
   --repo-url https://target-nexus3/repository/npm-hosted \
   -u targetUser -p targetPass \
@@ -181,7 +181,7 @@
 先导出单组件：
 
 ```bash
-./nexus3 component-download \
+./nexus-cli component-download \
   --format maven \
   --repo-url https://source-nexus3/repository/maven-releases \
   --group-id com.example \
@@ -194,7 +194,7 @@
 再导入目标仓库：
 
 ```bash
-./nexus3 component-upload \
+./nexus-cli component-upload \
   --format maven \
   --repo-url https://target-nexus3/repository/maven-releases \
   -u targetUser -p targetPass \
@@ -206,7 +206,7 @@
 先导出：
 
 ```bash
-./nexus3 component-download \
+./nexus-cli component-download \
   --format npm \
   --repo-url https://source-nexus3/repository/npm-hosted \
   --name @scope/demo \
@@ -218,7 +218,7 @@
 再导入：
 
 ```bash
-./nexus3 component-upload \
+./nexus-cli component-upload \
   --format npm \
   --repo-url https://target-nexus3/repository/npm-hosted \
   -u targetUser -p targetPass \
@@ -234,7 +234,7 @@
 先从 Nexus3 导出：
 
 ```bash
-./nexus3 backup-download \
+./nexus-cli backup-download \
   --format maven \
   --repo-url https://source-nexus3/repository/maven-snapshots \
   -u sourceUser -p sourcePass \
@@ -244,7 +244,7 @@
 再导入 Nexus2：
 
 ```bash
-./nexus3 nexus2-backup-upload \
+./nexus-cli nexus2-backup-upload \
   --format maven \
   --repo-url https://target-nexus2/content/repositories/snapshots \
   -u targetUser -p targetPass \
@@ -256,7 +256,7 @@
 先从 Nexus3 导出：
 
 ```bash
-./nexus3 backup-download \
+./nexus-cli backup-download \
   --format npm \
   --repo-url https://source-nexus3/repository/npm-hosted \
   -u sourceUser -p sourcePass \
@@ -266,7 +266,7 @@
 再导入 Nexus2：
 
 ```bash
-./nexus3 nexus2-backup-upload \
+./nexus-cli nexus2-backup-upload \
   --format npm \
   --repo-url https://target-nexus2/content/repositories/npm-hosted \
   -u targetUser -p targetPass \
@@ -282,7 +282,7 @@
 先从 Nexus2 导出：
 
 ```bash
-./nexus3 nexus2-component-download \
+./nexus-cli nexus2-component-download \
   --format maven \
   --repo-url https://source-nexus2/content/repositories/snapshots \
   --group-id com.example \
@@ -295,7 +295,7 @@
 再导入 Nexus3：
 
 ```bash
-./nexus3 component-upload \
+./nexus-cli component-upload \
   --format maven \
   --repo-url https://target-nexus3/repository/maven-snapshots \
   -u targetUser -p targetPass \
@@ -307,7 +307,7 @@
 先从 Nexus2 导出：
 
 ```bash
-./nexus3 nexus2-component-download \
+./nexus-cli nexus2-component-download \
   --format npm \
   --repo-url https://source-nexus2/content/repositories/npm-hosted \
   --name demo-pkg \
@@ -319,7 +319,7 @@
 再导入 Nexus3：
 
 ```bash
-./nexus3 component-upload \
+./nexus-cli component-upload \
   --format npm \
   --repo-url https://target-nexus3/repository/npm-hosted \
   -u targetUser -p targetPass \
@@ -333,7 +333,7 @@
 ### Maven
 
 ```bash
-./nexus3 component-download \
+./nexus-cli component-download \
   --format maven \
   --repo-url https://source-nexus3/repository/maven-releases \
   --group-id com.example \
@@ -342,7 +342,7 @@
   -u sourceUser -p sourcePass \
   ./component
 
-./nexus3 nexus2-component-upload \
+./nexus-cli nexus2-component-upload \
   --format maven \
   --repo-url https://target-nexus2/content/repositories/releases \
   -u targetUser -p targetPass \
@@ -352,7 +352,7 @@
 ### npm
 
 ```bash
-./nexus3 component-download \
+./nexus-cli component-download \
   --format npm \
   --repo-url https://source-nexus3/repository/npm-hosted \
   --name demo-pkg \
@@ -360,7 +360,7 @@
   -u sourceUser -p sourcePass \
   ./component
 
-./nexus3 nexus2-component-upload \
+./nexus-cli nexus2-component-upload \
   --format npm \
   --repo-url https://target-nexus2/content/repositories/npm-hosted \
   -u targetUser -p targetPass \
@@ -374,7 +374,7 @@
 ### Nexus3 HTTP 示例
 
 ```bash
-./nexus3 backup-download \
+./nexus-cli backup-download \
   --format maven \
   --repo-url http://nexus3.example.com/repository/maven-releases \
   -u admin -p 123456 \
@@ -384,7 +384,7 @@
 ### Nexus2 HTTP 示例
 
 ```bash
-./nexus3 nexus2-backup-upload \
+./nexus-cli nexus2-backup-upload \
   --format npm \
   --repo-url http://nexus2.example.com/content/repositories/npm-hosted \
   -u admin -p 123456 \
@@ -398,7 +398,7 @@
 ### Nexus3
 
 ```bash
-./nexus3 component-download \
+./nexus-cli component-download \
   --format maven \
   --repo-url https://nexus3.example.com/repository/maven-releases \
   --group-id com.example \
@@ -412,7 +412,7 @@
 ### Nexus2
 
 ```bash
-./nexus3 nexus2-backup-download \
+./nexus-cli nexus2-backup-download \
   --format npm \
   --repo-url https://nexus2.example.com/content/repositories/npm-hosted \
   -u admin -p 123456 \
@@ -434,4 +434,4 @@
 - `npm-pkg` 不走网络，不需要 `-k`
 - `npm-cache`、Nexus3 命令、Nexus2 命令都支持 `http://` 和 `https://`
 - Nexus2 的 npm 导入使用标准 npm publish JSON 方式
-- Nexus2 导出的结果会统一转换成 `nexus3-backup.json + assets/` 格式，方便后续直接导回 Nexus3 或 Nexus2
+- Nexus2 导出的结果会统一转换成 `nexus-cli-backup.json + assets/` 格式，方便后续直接导回 Nexus3 或 Nexus2

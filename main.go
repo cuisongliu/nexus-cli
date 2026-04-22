@@ -10,10 +10,10 @@ import (
 	"runtime"
 	"time"
 
-	"nexus3/internal/httpx"
-	nx2 "nexus3/internal/nexus2"
-	nx3 "nexus3/internal/nexus3"
-	"nexus3/internal/npm"
+	"nexus-cli/internal/httpx"
+	nx2 "nexus-cli/internal/nexus2"
+	nx3 "nexus-cli/internal/nexus3"
+	"nexus-cli/internal/npm"
 )
 
 func main() {
@@ -611,22 +611,22 @@ func printRootUsage(w io.Writer) {
 func rootUsage() string {
 	return `Usage:
   Local npm tools:
-    nexus3 npm-cache [-workers <n>] [-k] <package-lock.json|yarn.lock|node_modules> <store_path>
-    nexus3 npm-pkg <project_path> <store_path>
+    nexus-cli npm-cache [-workers <n>] [-k] <package-lock.json|yarn.lock|node_modules> <store_path>
+    nexus-cli npm-pkg <project_path> <store_path>
 
   Nexus3 commands:
-    nexus3 backup-download --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
-    nexus3 backup-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
-    nexus3 component-download --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [selectors] [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
-    nexus3 component-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
+    nexus-cli backup-download --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
+    nexus-cli backup-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
+    nexus-cli component-download --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [selectors] [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
+    nexus-cli component-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
 
   Nexus2 import commands:
-    nexus3 nexus2-backup-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
-    nexus3 nexus2-component-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
+    nexus-cli nexus2-backup-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
+    nexus-cli nexus2-component-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
 
   Nexus2 export commands:
-    nexus3 nexus2-backup-download --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
-    nexus3 nexus2-component-download --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [selectors] [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
+    nexus-cli nexus2-backup-download --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
+    nexus-cli nexus2-component-download --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [selectors] [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
 
 Local npm tools:
   npm-cache           Cache npm tarballs from package-lock.json, yarn.lock, or node_modules
@@ -650,103 +650,103 @@ Nexus2 export commands:
 
 func npmCacheUsage() string {
 	return `Usage:
-  nexus3 npm-cache [-workers <n>] [-k] <package-lock.json|yarn.lock|node_modules> <store_path>
+  nexus-cli npm-cache [-workers <n>] [-k] <package-lock.json|yarn.lock|node_modules> <store_path>
 
 Examples:
-  nexus3 npm-cache ./package-lock.json ./store
-  nexus3 npm-cache -k ./package-lock.json ./store
-  nexus3 npm-cache ./yarn.lock ./store
-  nexus3 npm-cache ./node_modules ./store
+  nexus-cli npm-cache ./package-lock.json ./store
+  nexus-cli npm-cache -k ./package-lock.json ./store
+  nexus-cli npm-cache ./yarn.lock ./store
+  nexus-cli npm-cache ./node_modules ./store
 `
 }
 
 func npmPkgUsage() string {
 	return `Usage:
-  nexus3 npm-pkg <project_path> <store_path>
+  nexus-cli npm-pkg <project_path> <store_path>
 
 Example:
-  nexus3 npm-pkg ./my-project ./store
+  nexus-cli npm-pkg ./my-project ./store
 `
 }
 
 func backupDownloadUsage() string {
 	return `Usage:
-  nexus3 backup-download --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
+  nexus-cli backup-download --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
 
 Examples:
-  nexus3 backup-download --format maven --base-url https://host --repository maven-releases -u admin -p 123456 ./backup
-  nexus3 backup-download --format npm --repo-url https://host/repository/npm-hosted -u admin -p 123456 ./backup
+  nexus-cli backup-download --format maven --base-url https://host --repository maven-releases -u admin -p 123456 ./backup
+  nexus-cli backup-download --format npm --repo-url https://host/repository/npm-hosted -u admin -p 123456 ./backup
 `
 }
 
 func backupUploadUsage() string {
 	return `Usage:
-  nexus3 backup-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
+  nexus-cli backup-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
 
 Examples:
-  nexus3 backup-upload --format maven --base-url https://host --repository maven-releases -u admin -p 123456 ./backup
-  nexus3 backup-upload --format npm --repo-url https://host/repository/npm-hosted -u admin -p 123456 ./backup
+  nexus-cli backup-upload --format maven --base-url https://host --repository maven-releases -u admin -p 123456 ./backup
+  nexus-cli backup-upload --format npm --repo-url https://host/repository/npm-hosted -u admin -p 123456 ./backup
 `
 }
 
 func componentDownloadUsage() string {
 	return `Usage:
-  nexus3 component-download --format maven (--base-url <url> --repository <name> | --repo-url <url>) --group-id <groupId> --artifact-id <artifactId> --version <version> [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
-  nexus3 component-download --format npm (--base-url <url> --repository <name> | --repo-url <url>) --name <package> --version <version> [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
+  nexus-cli component-download --format maven (--base-url <url> --repository <name> | --repo-url <url>) --group-id <groupId> --artifact-id <artifactId> --version <version> [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
+  nexus-cli component-download --format npm (--base-url <url> --repository <name> | --repo-url <url>) --name <package> --version <version> [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
 
 Examples:
-  nexus3 component-download --format maven --repo-url https://host/repository/maven-releases --group-id com.example --artifact-id demo --version 1.0.0 -u admin -p 123456 ./component
-  nexus3 component-download --format npm --base-url https://host --repository npm-hosted --name @scope/demo --version 1.0.0 -u admin -p 123456 ./component
+  nexus-cli component-download --format maven --repo-url https://host/repository/maven-releases --group-id com.example --artifact-id demo --version 1.0.0 -u admin -p 123456 ./component
+  nexus-cli component-download --format npm --base-url https://host --repository npm-hosted --name @scope/demo --version 1.0.0 -u admin -p 123456 ./component
 `
 }
 
 func componentUploadUsage() string {
 	return `Usage:
-  nexus3 component-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
+  nexus-cli component-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
 
 Examples:
-  nexus3 component-upload --format maven --repo-url https://host/repository/maven-releases -u admin -p 123456 ./component-backup
-  nexus3 component-upload --format npm --base-url https://host --repository npm-hosted -u admin -p 123456 ./package.tgz
+  nexus-cli component-upload --format maven --repo-url https://host/repository/maven-releases -u admin -p 123456 ./component-backup
+  nexus-cli component-upload --format npm --base-url https://host --repository npm-hosted -u admin -p 123456 ./package.tgz
 `
 }
 
 func nexus2BackupUploadUsage() string {
 	return `Usage:
-  nexus3 nexus2-backup-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
+  nexus-cli nexus2-backup-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
 
 Examples:
-  nexus3 nexus2-backup-upload --format maven --repo-url https://host/content/repositories/releases -u admin -p 123456 ./backup
-  nexus3 nexus2-backup-upload --format npm --base-url https://host --repository npm-hosted -u admin -p 123456 ./backup
+  nexus-cli nexus2-backup-upload --format maven --repo-url https://host/content/repositories/releases -u admin -p 123456 ./backup
+  nexus-cli nexus2-backup-upload --format npm --base-url https://host --repository npm-hosted -u admin -p 123456 ./backup
 `
 }
 
 func nexus2ComponentUploadUsage() string {
 	return `Usage:
-  nexus3 nexus2-component-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
+  nexus-cli nexus2-component-upload --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <input_path>
 
 Examples:
-  nexus3 nexus2-component-upload --format maven --repo-url https://host/content/repositories/releases -u admin -p 123456 ./component
-  nexus3 nexus2-component-upload --format npm --base-url https://host --repository npm-hosted -u admin -p 123456 ./package.tgz
+  nexus-cli nexus2-component-upload --format maven --repo-url https://host/content/repositories/releases -u admin -p 123456 ./component
+  nexus-cli nexus2-component-upload --format npm --base-url https://host --repository npm-hosted -u admin -p 123456 ./package.tgz
 `
 }
 
 func nexus2BackupDownloadUsage() string {
 	return `Usage:
-  nexus3 nexus2-backup-download --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
+  nexus-cli nexus2-backup-download --format <maven|npm> (--base-url <url> --repository <name> | --repo-url <url>) [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
 
 Examples:
-  nexus3 nexus2-backup-download --format maven --repo-url https://host/content/repositories/releases -u admin -p 123456 ./backup
-  nexus3 nexus2-backup-download --format npm --base-url https://host --repository npm-hosted -u admin -p 123456 ./backup
+  nexus-cli nexus2-backup-download --format maven --repo-url https://host/content/repositories/releases -u admin -p 123456 ./backup
+  nexus-cli nexus2-backup-download --format npm --base-url https://host --repository npm-hosted -u admin -p 123456 ./backup
 `
 }
 
 func nexus2ComponentDownloadUsage() string {
 	return `Usage:
-  nexus3 nexus2-component-download --format maven (--base-url <url> --repository <name> | --repo-url <url>) --group-id <groupId> --artifact-id <artifactId> --version <version> [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
-  nexus3 nexus2-component-download --format npm (--base-url <url> --repository <name> | --repo-url <url>) --name <package> --version <version> [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
+  nexus-cli nexus2-component-download --format maven (--base-url <url> --repository <name> | --repo-url <url>) --group-id <groupId> --artifact-id <artifactId> --version <version> [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
+  nexus-cli nexus2-component-download --format npm (--base-url <url> --repository <name> | --repo-url <url>) --name <package> --version <version> [-u <username>] [-p <password>] [-workers <n>] [-k] <output_dir>
 
 Examples:
-  nexus3 nexus2-component-download --format maven --repo-url https://host/content/repositories/releases --group-id com.example --artifact-id demo --version 1.0.0 -u admin -p 123456 ./component
-  nexus3 nexus2-component-download --format npm --base-url https://host --repository npm-hosted --name demo-pkg --version 1.0.0 -u admin -p 123456 ./component
+  nexus-cli nexus2-component-download --format maven --repo-url https://host/content/repositories/releases --group-id com.example --artifact-id demo --version 1.0.0 -u admin -p 123456 ./component
+  nexus-cli nexus2-component-download --format npm --base-url https://host --repository npm-hosted --name demo-pkg --version 1.0.0 -u admin -p 123456 ./component
 `
 }

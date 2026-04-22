@@ -16,7 +16,7 @@ import (
 	"sync"
 	"time"
 
-	"nexus3/internal/httpx"
+	"nexus-cli/internal/httpx"
 )
 
 type DownloadOptions struct {

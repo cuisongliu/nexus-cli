@@ -1,3 +1,3 @@
-module nexus3
+module nexus-cli
 
 go 1.25

@@ -14,7 +14,7 @@ import (
 	"sync"
 	"testing"
 
-	nx3 "nexus3/internal/nexus3"
+	nx3 "nexus-cli/internal/nexus3"
 )
 
 func TestImportBackupMaven(t *testing.T) {

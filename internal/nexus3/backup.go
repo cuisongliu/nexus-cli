@@ -492,7 +492,8 @@ func ResolveMavenUploadInputs(inputPath string) ([]UploadFile, error) {
 		if d.IsDir() {
 			return nil
 		}
-		if filepath.Base(path) == ManifestFilename || isChecksumFile(path) {
+		base := filepath.Base(path)
+		if base == ManifestFilename || base == LegacyManifestFilename || isChecksumFile(path) {
 			return nil
 		}
 
@@ -578,13 +579,23 @@ func loadManifest(inputPath string) (BackupManifest, string, bool, error) {
 	var root string
 	switch {
 	case info.IsDir():
-		manifestPath = filepath.Join(inputPath, ManifestFilename)
 		root = inputPath
-	case filepath.Base(inputPath) == ManifestFilename:
+	case filepath.Base(inputPath) == ManifestFilename, filepath.Base(inputPath) == LegacyManifestFilename:
 		manifestPath = inputPath
 		root = filepath.Dir(inputPath)
 	default:
 		return BackupManifest{}, "", false, nil
+	}
+
+	if info.IsDir() {
+		manifestPath = filepath.Join(inputPath, ManifestFilename)
+		if _, err := os.Stat(manifestPath); err != nil {
+			if errors.Is(err, os.ErrNotExist) {
+				manifestPath = filepath.Join(inputPath, LegacyManifestFilename)
+			} else {
+				return BackupManifest{}, "", false, fmt.Errorf("stat manifest: %w", err)
+			}
+		}
 	}
 
 	if _, err := os.Stat(manifestPath); err != nil {

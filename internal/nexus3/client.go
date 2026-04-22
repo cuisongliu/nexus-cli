@@ -12,7 +12,7 @@ import (
 	"path"
 	"strings"
 
-	"nexus3/internal/httpx"
+	"nexus-cli/internal/httpx"
 )
 
 type Format string
@@ -22,7 +22,10 @@ const (
 	FormatNPM   Format = "npm"
 )
 
-const ManifestFilename = "nexus3-backup.json"
+const (
+	ManifestFilename       = "nexus-cli-backup.json"
+	LegacyManifestFilename = "nexus3-backup.json"
+)
 
 type Target struct {
 	BaseURL    string

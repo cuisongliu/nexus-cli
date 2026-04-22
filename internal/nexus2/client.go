@@ -16,7 +16,7 @@ import (
 	"path"
 	"strings"
 
-	"nexus3/internal/httpx"
+	"nexus-cli/internal/httpx"
 )
 
 type Target struct {

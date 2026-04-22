@@ -85,7 +85,7 @@ type backupDownloadJob struct {
 	Destination string
 }
 
-type mavenUploadItem struct {
+type UploadFile struct {
 	RepositoryPath string
 	SourcePath     string
 }
@@ -240,7 +240,7 @@ func downloadComponents(ctx context.Context, client *Client, components []Compon
 }
 
 func uploadMavenBackup(ctx context.Context, client *Client, opts UploadOptions) error {
-	items, err := resolveMavenUploadItems(opts.InputPath)
+	items, err := ResolveMavenUploadInputs(opts.InputPath)
 	if err != nil {
 		return err
 	}
@@ -248,13 +248,13 @@ func uploadMavenBackup(ctx context.Context, client *Client, opts UploadOptions) 
 		return fmt.Errorf("no maven assets found in %s", opts.InputPath)
 	}
 
-	slices.SortFunc(items, func(a, b mavenUploadItem) int {
+	slices.SortFunc(items, func(a, b UploadFile) int {
 		return strings.Compare(a.RepositoryPath, b.RepositoryPath)
 	})
 	fmt.Fprintf(opts.Stdout, "found %d maven assets to upload\n", len(items))
 
 	errs := make(chan error, len(items))
-	jobs := make(chan mavenUploadItem)
+	jobs := make(chan UploadFile)
 	var wg sync.WaitGroup
 
 	workerCount := opts.Workers
@@ -305,7 +305,7 @@ func uploadMavenBackup(ctx context.Context, client *Client, opts UploadOptions) 
 }
 
 func uploadNPMBackup(ctx context.Context, client *Client, opts UploadOptions) error {
-	tarballs, err := resolveNPMUploadInputs(opts.InputPath)
+	tarballs, err := ResolveNPMUploadInputs(opts.InputPath)
 	if err != nil {
 		return err
 	}
@@ -451,7 +451,7 @@ func writeManifest(outputDir string, manifest BackupManifest) error {
 	return nil
 }
 
-func resolveMavenUploadItems(inputPath string) ([]mavenUploadItem, error) {
+func ResolveMavenUploadInputs(inputPath string) ([]UploadFile, error) {
 	manifest, manifestRoot, found, err := loadManifest(inputPath)
 	if err != nil {
 		return nil, err
@@ -460,14 +460,14 @@ func resolveMavenUploadItems(inputPath string) ([]mavenUploadItem, error) {
 		if manifest.Format != FormatMaven {
 			return nil, fmt.Errorf("backup manifest format is %s, expected %s", manifest.Format, FormatMaven)
 		}
-		items := make([]mavenUploadItem, 0)
+		items := make([]UploadFile, 0)
 		for _, component := range manifest.Components {
 			for _, asset := range component.Assets {
 				sourcePath, err := resolveManifestFile(manifestRoot, asset.File)
 				if err != nil {
 					return nil, err
 				}
-				items = append(items, mavenUploadItem{
+				items = append(items, UploadFile{
 					RepositoryPath: asset.RepositoryPath,
 					SourcePath:     sourcePath,
 				})
@@ -484,7 +484,7 @@ func resolveMavenUploadItems(inputPath string) ([]mavenUploadItem, error) {
 		return nil, fmt.Errorf("maven upload without a manifest requires a directory: %s", inputPath)
 	}
 
-	items := make([]mavenUploadItem, 0)
+	items := make([]UploadFile, 0)
 	err = filepath.WalkDir(inputPath, func(path string, d os.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
@@ -500,7 +500,7 @@ func resolveMavenUploadItems(inputPath string) ([]mavenUploadItem, error) {
 		if err != nil {
 			return fmt.Errorf("relative path for %s: %w", path, err)
 		}
-		items = append(items, mavenUploadItem{
+		items = append(items, UploadFile{
 			RepositoryPath: filepath.ToSlash(relativePath),
 			SourcePath:     path,
 		})
@@ -512,7 +512,7 @@ func resolveMavenUploadItems(inputPath string) ([]mavenUploadItem, error) {
 	return items, nil
 }
 
-func resolveNPMUploadInputs(inputPath string) ([]string, error) {
+func ResolveNPMUploadInputs(inputPath string) ([]string, error) {
 	manifest, manifestRoot, found, err := loadManifest(inputPath)
 	if err != nil {
 		return nil, err

@@ -12,10 +12,16 @@ func TestRootUsageSections(t *testing.T) {
 	for _, want := range []string{
 		"Local npm tools:",
 		"Nexus3 commands:",
+		"Nexus2 import commands:",
+		"Nexus2 export commands:",
 		"npm-cache",
 		"npm-pkg",
 		"backup-download",
 		"component-upload",
+		"nexus2-backup-upload",
+		"nexus2-component-upload",
+		"nexus2-backup-download",
+		"nexus2-component-download",
 	} {
 		if !strings.Contains(usage, want) {
 			t.Fatalf("rootUsage() missing %q\n%s", want, usage)
@@ -63,5 +69,25 @@ func TestRunNpmPkgUsage(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "Usage:") {
 		t.Fatalf("run(npm-pkg) error = %q, want usage", err.Error())
+	}
+}
+
+func TestRunNexus2BackupUploadUsage(t *testing.T) {
+	err := run([]string{"nexus2-backup-upload"})
+	if err == nil {
+		t.Fatal("run(nexus2-backup-upload) expected error for missing args")
+	}
+	if !strings.Contains(err.Error(), "Usage:") {
+		t.Fatalf("run(nexus2-backup-upload) error = %q, want usage", err.Error())
+	}
+}
+
+func TestRunNexus2ComponentDownloadUsage(t *testing.T) {
+	err := run([]string{"nexus2-component-download"})
+	if err == nil {
+		t.Fatal("run(nexus2-component-download) expected error for missing args")
+	}
+	if !strings.Contains(err.Error(), "Usage:") {
+		t.Fatalf("run(nexus2-component-download) error = %q, want usage", err.Error())
 	}
 }

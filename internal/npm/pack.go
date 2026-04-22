@@ -24,6 +24,8 @@ type packSpec struct {
 	NameVersion string
 }
 
+var npmPackRunner = defaultNpmPackRunner
+
 func PackTarballs(ctx context.Context, projectPath, storePath string, opts PackOptions) error {
 	if opts.Stdout == nil {
 		opts.Stdout = io.Discard
@@ -58,7 +60,7 @@ func PackTarballs(ctx context.Context, projectPath, storePath string, opts PackO
 	var packErrs []error
 	for _, spec := range specs {
 		fmt.Fprintf(opts.Stdout, "packing %s\n", spec.NameVersion)
-		output, err := runNpmPack(ctx, spec.Dir, storePath)
+		output, err := npmPackRunner(ctx, spec.Dir, storePath)
 		if err != nil {
 			fmt.Fprintf(opts.Stderr, "pack failed %s: %v\n", spec.NameVersion, err)
 			packErrs = append(packErrs, fmt.Errorf("%s: %w", spec.NameVersion, err))
@@ -144,7 +146,7 @@ func collectPackSpecs(root string) ([]packSpec, error) {
 	return specs, nil
 }
 
-func runNpmPack(ctx context.Context, packDir, storePath string) (string, error) {
+func defaultNpmPackRunner(ctx context.Context, packDir, storePath string) (string, error) {
 	cmd := exec.CommandContext(ctx, "npm", "pack", "--pack-destination", storePath)
 	cmd.Dir = packDir
 	output, err := cmd.CombinedOutput()

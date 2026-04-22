@@ -11,6 +11,29 @@
 
 旧的 `upload`、`npm-down`、`npm-pack` 已从 CLI 移除，其中 npm 相关命令改名为 `npm-cache`、`npm-pkg`。
 
+## CI/CD
+
+仓库已经添加 GitHub Actions 流水线：
+
+- `push` / `pull_request`：自动执行 `go test ./...`，并交叉构建 `linux/darwin/windows` 的 `amd64/arm64` 制品
+- 推送 `v*` tag：自动创建 GitHub Release，并上传 6 个平台压缩包和 `checksums.txt`
+
+发版方式：
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+Release 产物命名示例：
+
+- `nexus-cli_v0.1.0_linux_amd64.tar.gz`
+- `nexus-cli_v0.1.0_linux_arm64.tar.gz`
+- `nexus-cli_v0.1.0_darwin_amd64.tar.gz`
+- `nexus-cli_v0.1.0_darwin_arm64.tar.gz`
+- `nexus-cli_v0.1.0_windows_amd64.zip`
+- `nexus-cli_v0.1.0_windows_arm64.zip`
+
 ## 快速判断
 
 如果你的目标是：

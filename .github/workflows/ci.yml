@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    tags-ignore:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+
+      - name: Run unit tests
+        run: go test ./...
+
+  build:
+    name: Build (${{ matrix.goos }}/${{ matrix.goarch }})
+    runs-on: ubuntu-latest
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            ext: ""
+          - goos: linux
+            goarch: arm64
+            ext: ""
+          - goos: darwin
+            goarch: amd64
+            ext: ""
+          - goos: darwin
+            goarch: arm64
+            ext: ""
+          - goos: windows
+            goarch: amd64
+            ext: ".exe"
+          - goos: windows
+            goarch: arm64
+            ext: ".exe"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+
+      - name: Build binary
+        env:
+          CGO_ENABLED: "0"
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          mkdir -p dist
+          go build -trimpath -ldflags="-s -w" -o "dist/nexus-cli${{ matrix.ext }}" .
+
+      - name: Package artifact
+        id: package
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          EXT: ${{ matrix.ext }}
+        run: |
+          archive_base="nexus-cli_${GITHUB_SHA}_${GOOS}_${GOARCH}"
+          stage_dir="dist/${GOOS}_${GOARCH}"
+          binary_name="nexus-cli${EXT}"
+
+          mkdir -p "${stage_dir}"
+          mv "dist/${binary_name}" "${stage_dir}/${binary_name}"
+          cp README.md "${stage_dir}/README.md"
+
+          if [ "${GOOS}" = "windows" ]; then
+            (cd "${stage_dir}" && zip -q "../${archive_base}.zip" "${binary_name}" README.md)
+            printf 'artifact_path=dist/%s.zip\n' "${archive_base}" >> "$GITHUB_OUTPUT"
+          else
+            tar -C "${stage_dir}" -czf "dist/${archive_base}.tar.gz" "${binary_name}" README.md
+            printf 'artifact_path=dist/%s.tar.gz\n' "${archive_base}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          path: ${{ steps.package.outputs.artifact_path }}
+          archive: false
+          if-no-files-found: error
+          retention-days: 14
